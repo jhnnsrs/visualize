@@ -66,10 +66,17 @@ void ofApp::update(){
 	if ( ofGetElapsedTimeMillis() > zeit + 1000 && nadded < 4)
 	{
 		
+		// Select last pyramid as working pyramid
+		// modifiers specify the chosen vertices
 		ofVec3f s = allvectors[nvertices-smod];
 		ofVec3f t = allvectors[nvertices-tmod];
 		ofVec3f u = allvectors[nvertices-umod];
 		ofVec3f v = allvectors[nvertices-vmod];
+
+		// Rotate pyramide so that the spawn side
+		// can be interpreted as A,B,C (Base) and D
+		// peak. The base is not considered a spawning
+		// side, as this may mess with the 3d structure.
 
 		if (nadded == 0){
 			a = s;
@@ -90,6 +97,9 @@ void ofApp::update(){
 			d = v;
 		}
 
+		// Calculate barycenter of base (z, with help of m)
+		// normal vector (n) of base and hence the new peak of the
+		// pyramid (newv)
 		ofVec3f n,m,z,newv;
 
 		n = (b-a).crossed(d-a);
@@ -98,10 +108,13 @@ void ofApp::update(){
 
 		newv = z + n.normalized()*30.0f;
 
+		// Add vector to mesh
 		mesh.addVertex(newv);
 		allvectors.push_back(newv);
 		nvertices++;
 
+		// Increment Modifiers, depending on spawn side
+		// TODO: Breaks my brain.
 		if (nadded == 0){
 			smod++;
 			tmod++;
@@ -118,6 +131,8 @@ void ofApp::update(){
 		}
 		
 		
+		// Add sides (triangles) to the mesh
+		// TODO: seems like modifiers will not help here?
 		cout << nvertices-smod << " " << nvertices-tmod << " " << nvertices-vmod << endl;
 		mesh.addIndex(nvertices - smod);
 		mesh.addIndex(nvertices - tmod);
