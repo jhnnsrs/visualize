@@ -18,6 +18,7 @@ void ofApp::setup(){
 	mesh.enableIndices();
 	ofColor color(255,255,0);
 	
+	 mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 
 	a = ofVec3f(0,0,0);
 	b =	ofVec3f(100,0,0);
@@ -39,10 +40,8 @@ void ofApp::setup(){
 	allvectors.push_back(d);
 	mesh.addColor(ofColor(255,0,255));
 
-	nvertices = nvertices+3;
-	cout << mesh.getNumVertices()-1 << endl;
-	cout << nvertices << endl;
-	cout << allvectors.size()-1 << endl;
+	nvertices = nvertices + 3;
+
 	mesh.addIndex(0);
 	mesh.addIndex(1);
 	mesh.addIndex(3);
@@ -60,12 +59,17 @@ void ofApp::setup(){
 	mesh.addIndex(2);
 
 	
-	s = &allvectors[nvertices-smod];
-	t = &allvectors[nvertices-tmod];
-	u = &allvectors[nvertices-umod];
-	v = &allvectors[nvertices-vmod];
+	s = &allvectors[0];
+	t = &allvectors[1];
+	u = &allvectors[2];
+	v = &allvectors[3];
 
 
+	//cout << "INTITIAL TRIANGLE" << endl;
+	//cout << *s << endl;
+	//cout << *t << endl;
+	//cout << *u << endl;
+	//cout << *v << endl;
 }
 
 //--------------------------------------------------------------
@@ -75,6 +79,11 @@ void ofApp::update(){
 	if ( ofGetElapsedTimeMillis() > zeit + 1000 && nadded < 4)
 	{
 		
+		/*cout << s - &allvectors[0] << endl;
+		cout << t - &allvectors[0] << endl;
+		cout << u - &allvectors[0] << endl;
+		cout << v - &allvectors[0] << endl;*/
+
 		// Select last pyramid as working pyramid
 		// modifiers specify the chosen vertices
 
@@ -89,13 +98,13 @@ void ofApp::update(){
 			c = *u;
 			d = *v;
 		}
-		if (nadded == 1){
+		if (nadded == -1){
 			a = *t;
 			b = *u;
 			c = *s;
 			d = *v;
 		}
-		if (nadded == 2){
+		if (nadded == 1){
 			a = *u;
 			b = *s;
 			c = *t;
@@ -107,40 +116,59 @@ void ofApp::update(){
 		// pyramid (newv)
 		ofVec3f n,m,z,newv;
 
+		
+		/*cout << "TRIANGLE" << nadded << " ROUND "<< endl;
+		cout << a << endl;
+		cout << b << endl;
+		cout << c << endl;
+		cout << d << endl;*/
+
 		n = (b-a).crossed(d-a);
 		m = b + (d-b)/2;
 		z = a + 0.666f*(m-a);
 
 		newv = z + n.normalized()*100.0f;
 
+		smod =  s - &allvectors[0];
+		tmod =  t - &allvectors[0];
+		umod =  u - &allvectors[0];
+		vmod =  v - &allvectors[0];
+
+		cout << smod;
 		// Add vector to mesh
 		mesh.addVertex(newv);
 		allvectors.push_back(newv);
 		nvertices++;
 
+		s = &allvectors[smod];
+		t = &allvectors[tmod];
+		u = &allvectors[umod];
+		v = &allvectors[vmod];
 
 		// Change to new triangle 
 		
 		if (nadded == 0){
-			t = u;
-			u = s;
+			u = t;
+			t = s;
+			
 		}
 
 		if (nadded == 1){
-			u = t;
-			t = s;
+			u = u;
+			t = t;
 				 
 		}
 
 		if (nadded == 2){
-			t = t;
-			u = u;
+			t = u;
+			u = s;
 		}
 
-		s= &allvectors[nvertices-1];
-		v= &allvectors[nvertices];
+
+		s = v;
+		v = &allvectors[nvertices];
 		// Add sides (triangles) to the mesh
-		
+
 		mesh.addIndex(s - &allvectors[0]);
 		mesh.addIndex(t - &allvectors[0]);
 		mesh.addIndex(v - &allvectors[0]);
@@ -153,11 +181,9 @@ void ofApp::update(){
 		mesh.addIndex(t - &allvectors[0]);
 		mesh.addIndex(v - &allvectors[0]);
 
-		// Decrement Modifiers, depending on spawn side
-		// TODO: Breaks my brain. MACH MA HINNE LUKAS
-		// Hardcoded numbers must dynamically change on count of
-		// oparations from one side
-		// PROBLEM: When
+		mesh.addIndex(s - &allvectors[0]);
+		mesh.addIndex(t - &allvectors[0]);
+		mesh.addIndex(u - &allvectors[0]);
 
 
 		zeit = ofGetElapsedTimeMillis();
