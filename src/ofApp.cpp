@@ -106,45 +106,83 @@ void ofApp::update(){
 		m = b + (d-b)/2;
 		z = a + 0.666f*(m-a);
 
-		newv = z + n.normalized()*30.0f;
+		newv = z + n.normalized()*100.0f;
 
 		// Add vector to mesh
 		mesh.addVertex(newv);
 		allvectors.push_back(newv);
 		nvertices++;
 
-		// Increment Modifiers, depending on spawn side
-		// TODO: Breaks my brain.
+
+		// Increment all modifiers
+		umod++;
+		smod++;
+		tmod++;
+		vmod++;
+
+		// Add sides (triangles) to the mesh
+		cout << nvertices-smod << " " << nvertices-tmod << " " << nvertices-vmod << endl;
+
 		if (nadded == 0){
-			smod++;
-			tmod++;
+		mesh.addIndex(nvertices - smod);
+		mesh.addIndex(nvertices - tmod);
+		mesh.addIndex(nvertices);
+
+		mesh.addIndex(nvertices - tmod);
+		mesh.addIndex(nvertices - vmod);
+		mesh.addIndex(nvertices);
+
+		mesh.addIndex(nvertices - smod);
+		mesh.addIndex(nvertices - vmod);
+		mesh.addIndex(nvertices);
 		}
 
 		if (nadded == 1){
-			umod++;
-			smod++;
+		mesh.addIndex(nvertices - tmod);
+		mesh.addIndex(nvertices - umod);
+		mesh.addIndex(nvertices);
+
+		mesh.addIndex(nvertices - tmod);
+		mesh.addIndex(nvertices - vmod);
+		mesh.addIndex(nvertices);
+
+		mesh.addIndex(nvertices - umod);
+		mesh.addIndex(nvertices - vmod);
+		mesh.addIndex(nvertices);
 		}
 
 		if (nadded == 2){
-			tmod++;
-			umod++;
+		mesh.addIndex(nvertices - tmod);
+		mesh.addIndex(nvertices - vmod);
+		mesh.addIndex(nvertices);
+
+		mesh.addIndex(nvertices - tmod);
+		mesh.addIndex(nvertices - umod);
+		mesh.addIndex(nvertices);
+
+		mesh.addIndex(nvertices - umod);
+		mesh.addIndex(nvertices - vmod);
+		mesh.addIndex(nvertices);
 		}
-		
-		
-		// Add sides (triangles) to the mesh
-		// TODO: seems like modifiers will not help here?
-		cout << nvertices-smod << " " << nvertices-tmod << " " << nvertices-vmod << endl;
-		mesh.addIndex(nvertices - smod);
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices);
 
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices);
+		// Decrement Modifiers, depending on spawn side
+		// TODO: Breaks my brain. MACH MA HINNE LUKAS
+		// Hardcoded numbers must dynamically change on count of
+		// oparations from one side
+		if (nadded == 0){
+			umod--;
+			vmod--;
+		}
 
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices - smod);
-		mesh.addIndex(nvertices);
+		if (nadded == 1){
+			smod = smod - 3;
+			vmod--;
+		}
+
+		if (nadded == 2){
+			smod--;
+			vmod--;
+		}
 
 		zeit = ofGetElapsedTimeMillis();
 		
@@ -153,7 +191,7 @@ void ofApp::update(){
 		cout << allvectors.size()-1 << endl;
 		
 		nadded++;
-		if (nadded ==3){ nadded = 5;}
+		if (nadded ==3){ nadded = 6;}
 	}
 
 }
@@ -162,7 +200,7 @@ void ofApp::update(){
 void ofApp::draw(){
 	ofBackground(122,122,122);
 	cam.begin();
-	mesh.drawWireframe();
+	mesh.draw();
 	cam.end();
 
 }
