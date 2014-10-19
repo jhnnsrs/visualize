@@ -1,9 +1,9 @@
 #include "ofApp.h"
-
+#include <ctime>
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofEnableDepthTest();
-
+	srand(time(0));
 	smod = 3;
 	tmod = 2;
 	umod = 1;
@@ -59,33 +59,22 @@ void ofApp::setup(){
 	mesh.addIndex(2);
 
 	
+	// Set Pointers to Initial Triangle
 	s = &allvectors[0];
 	t = &allvectors[1];
 	u = &allvectors[2];
 	v = &allvectors[3];
-
-
-	//cout << "INTITIAL TRIANGLE" << endl;
-	//cout << *s << endl;
-	//cout << *t << endl;
-	//cout << *u << endl;
-	//cout << *v << endl;
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
 
-	if ( ofGetElapsedTimeMillis() > zeit + 1000 && nadded < 4)
+	if ( ofGetElapsedTimeMillis() > zeit + 100)
 	{
+		// Select random side
 		
-		/*cout << s - &allvectors[0] << endl;
-		cout << t - &allvectors[0] << endl;
-		cout << u - &allvectors[0] << endl;
-		cout << v - &allvectors[0] << endl;*/
-
-		// Select last pyramid as working pyramid
-		// modifiers specify the chosen vertices
+		nadded = 0 + (rand() % (int)(2 + 1));
 
 		// Rotate pyramide so that the spawn side
 		// can be interpreted as A,B,C (Base) and D
@@ -98,13 +87,13 @@ void ofApp::update(){
 			c = *u;
 			d = *v;
 		}
-		if (nadded == -1){
+		if (nadded == 1){
 			a = *t;
 			b = *u;
 			c = *s;
 			d = *v;
 		}
-		if (nadded == 1){
+		if (nadded == 2){
 			a = *u;
 			b = *s;
 			c = *t;
@@ -115,37 +104,37 @@ void ofApp::update(){
 		// normal vector (n) of base and hence the new peak of the
 		// pyramid (newv)
 		ofVec3f n,m,z,newv;
-
-		
-		/*cout << "TRIANGLE" << nadded << " ROUND "<< endl;
-		cout << a << endl;
-		cout << b << endl;
-		cout << c << endl;
-		cout << d << endl;*/
-
+	
 		n = (b-a).crossed(d-a);
 		m = b + (d-b)/2;
 		z = a + 0.666f*(m-a);
 
-		newv = z + n.normalized()*100.0f;
+		float randomness = ofMap(ofSignedNoise(ofGetElapsedTimef(),z.x,z.y,z.z),-1,1,0,1)*200;
+		newv = z + n.normalized()*randomness;
 
+		// Dirty, because vectors in C++ do not allow pointers to elements,
+		// within the vector when it allocates new memory. Reference and pointers
+		// return garbage. Python <3 
 		smod =  s - &allvectors[0];
 		tmod =  t - &allvectors[0];
 		umod =  u - &allvectors[0];
 		vmod =  v - &allvectors[0];
 
-		cout << smod;
 		// Add vector to mesh
 		mesh.addVertex(newv);
+		mesh.addColor(ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)));
 		allvectors.push_back(newv);
 		nvertices++;
 
+		// Rereference pointers
 		s = &allvectors[smod];
 		t = &allvectors[tmod];
 		u = &allvectors[umod];
 		v = &allvectors[vmod];
 
-		// Change to new triangle 
+		
+		
+		// Change to new pyramid, wuhu beautiful
 		
 		if (nadded == 0){
 			u = t;
@@ -164,9 +153,9 @@ void ofApp::update(){
 			u = s;
 		}
 
-
 		s = v;
 		v = &allvectors[nvertices];
+
 		// Add sides (triangles) to the mesh
 
 		mesh.addIndex(s - &allvectors[0]);
@@ -188,8 +177,6 @@ void ofApp::update(){
 
 		zeit = ofGetElapsedTimeMillis();
 		
-		nadded++;
-		if (nadded ==3){ nadded = 0;}
 	}
 
 }
@@ -198,7 +185,10 @@ void ofApp::update(){
 void ofApp::draw(){
 	ofBackground(122,122,122);
 	cam.begin();
-	mesh.draw();
+		ofPushMatrix();
+			ofRotateZ(ofGetElapsedTimef()*0.01);
+			mesh.draw();
+		ofPopMatrix();
 	cam.end();
 
 }
