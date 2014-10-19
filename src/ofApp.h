@@ -8,11 +8,13 @@ class ofApp : public ofBaseApp{
 		ofMesh	mesh;
 		ofEasyCam cam;
 		ofVec3f a,b,c,d;
+		ofVec3f *s,*t,*u,*v;
 
 		vector<ofVec3f> allvectors;
 		int nvertices,nadded;
 		long zeit;
 		int smod,tmod,umod,vmod;
+		int suv,stv,tuv;
 		void setup();
 		void update();
 		void draw();

@@ -8,6 +8,9 @@ void ofApp::setup(){
 	tmod = 2;
 	umod = 1;
 	vmod = 0;
+	suv = 1;
+	tuv = 1;
+	stv = 1;
 
 	nvertices = 0;
 	nadded = 0;
@@ -56,6 +59,12 @@ void ofApp::setup(){
 	mesh.addIndex(3);
 	mesh.addIndex(2);
 
+	
+	s = &allvectors[nvertices-smod];
+	t = &allvectors[nvertices-tmod];
+	u = &allvectors[nvertices-umod];
+	v = &allvectors[nvertices-vmod];
+
 
 }
 
@@ -68,10 +77,6 @@ void ofApp::update(){
 		
 		// Select last pyramid as working pyramid
 		// modifiers specify the chosen vertices
-		ofVec3f s = allvectors[nvertices-smod];
-		ofVec3f t = allvectors[nvertices-tmod];
-		ofVec3f u = allvectors[nvertices-umod];
-		ofVec3f v = allvectors[nvertices-vmod];
 
 		// Rotate pyramide so that the spawn side
 		// can be interpreted as A,B,C (Base) and D
@@ -79,22 +84,22 @@ void ofApp::update(){
 		// side, as this may mess with the 3d structure.
 
 		if (nadded == 0){
-			a = s;
-			b = t;
-			c = u;
-			d = v;
+			a = *s;
+			b = *t;
+			c = *u;
+			d = *v;
 		}
 		if (nadded == 1){
-			a = t;
-			b = u;
-			c = s;
-			d = v;
+			a = *t;
+			b = *u;
+			c = *s;
+			d = *v;
 		}
 		if (nadded == 2){
-			a = u;
-			b = s;
-			c = t;
-			d = v;
+			a = *u;
+			b = *s;
+			c = *t;
+			d = *v;
 		}
 
 		// Calculate barycenter of base (z, with help of m)
@@ -114,84 +119,51 @@ void ofApp::update(){
 		nvertices++;
 
 
-		// Increment all modifiers
-		umod++;
-		smod++;
-		tmod++;
-		vmod++;
-
-		// Add sides (triangles) to the mesh
-		cout << nvertices-smod << " " << nvertices-tmod << " " << nvertices-vmod << endl;
-
+		// Change to new triangle 
+		
 		if (nadded == 0){
-		mesh.addIndex(nvertices - smod);
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - smod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
+			t = u;
+			u = s;
 		}
 
 		if (nadded == 1){
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
+			u = t;
+			t = s;
+				 
 		}
 
 		if (nadded == 2){
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
+			t = t;
+			u = u;
 		}
+
+		s= &allvectors[nvertices-1];
+		v= &allvectors[nvertices];
+		// Add sides (triangles) to the mesh
+		
+		mesh.addIndex(s - &allvectors[0]);
+		mesh.addIndex(t - &allvectors[0]);
+		mesh.addIndex(v - &allvectors[0]);
+
+		mesh.addIndex(s - &allvectors[0]);
+		mesh.addIndex(u - &allvectors[0]);
+		mesh.addIndex(v - &allvectors[0]);
+
+		mesh.addIndex(u - &allvectors[0]);
+		mesh.addIndex(t - &allvectors[0]);
+		mesh.addIndex(v - &allvectors[0]);
 
 		// Decrement Modifiers, depending on spawn side
 		// TODO: Breaks my brain. MACH MA HINNE LUKAS
 		// Hardcoded numbers must dynamically change on count of
 		// oparations from one side
-		if (nadded == 0){
-			umod--;
-			vmod--;
-		}
+		// PROBLEM: When
 
-		if (nadded == 1){
-			smod = smod - 3;
-			vmod--;
-		}
-
-		if (nadded == 2){
-			smod--;
-			vmod--;
-		}
 
 		zeit = ofGetElapsedTimeMillis();
 		
-		cout << mesh.getNumVertices()-1 << endl;
-		cout << nvertices << endl;
-		cout << allvectors.size()-1 << endl;
-		
 		nadded++;
-		if (nadded ==3){ nadded = 6;}
+		if (nadded ==3){ nadded = 0;}
 	}
 
 }
