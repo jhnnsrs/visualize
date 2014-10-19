@@ -1,10 +1,13 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxPostProcessing.h"
 
 class ofApp : public ofBaseApp{
 
 	public:
+		bool fullscreen;
+		ofxPostProcessing post;
 		ofMesh	mesh;
 		ofEasyCam cam;
 		ofVec3f a,b,c,d;

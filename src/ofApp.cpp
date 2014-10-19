@@ -2,8 +2,15 @@
 #include <ctime>
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetFrameRate(60);
 	ofEnableDepthTest();
 	srand(time(0));
+	fullscreen = false;
+
+	post.init(1920, 1080);
+	post.createPass<FxaaPass>();
+	post.createPass<GodRaysPass>();
+
 	smod = 3;
 	tmod = 2;
 	umod = 1;
@@ -70,7 +77,7 @@ void ofApp::setup(){
 void ofApp::update(){
 
 
-	if ( ofGetElapsedTimeMillis() > zeit + 100)
+	if ( ofGetElapsedTimeMillis() > zeit + 10)
 	{
 		// Select random side
 		
@@ -183,18 +190,32 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	ofBackground(122,122,122);
+	ofColor centerColor = ofColor(85, 78, 68);
+    ofColor edgeColor(0, 0, 0);
+    //ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
+
 	cam.begin();
+	post.begin(cam);
+		ofBackground(ofColor(0,0,0));
 		ofPushMatrix();
-			ofRotateZ(ofGetElapsedTimef()*0.01);
+			ofRotateZ(ofGetElapsedTimef()*10);
+			ofRotateY(ofGetElapsedTimef()*10);
+			ofRotateX(ofGetElapsedTimef()*10);
 			mesh.draw();
-		ofPopMatrix();
+		ofPopMatrix();	
+	post.end();
 	cam.end();
+	ofDrawBitmapString("FPS: " + ofToString(ofGetFrameRate()),10,10,0);
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+	
+	if (key == 102) {
+		fullscreen = !fullscreen;
+		ofSetFullscreen(fullscreen);
+	}
 
 }
 
