@@ -172,6 +172,10 @@
     <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.cpp">
       <Filter>addons\ofxPostProcessing</Filter>
     </ClCompile>
+    <ClCompile Include="src\JCentralFragment.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JFragment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -449,6 +453,10 @@
     <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.h">
       <Filter>addons\ofxPostProcessing</Filter>
     </ClInclude>
+    <ClInclude Include="src\JCentralFragment.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JFragment.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

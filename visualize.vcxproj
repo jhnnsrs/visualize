@@ -114,6 +114,8 @@
     <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ToonPass.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\VerticalTiltShifPass.cpp" />
     <ClCompile Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.cpp" />
+    <ClCompile Include="src\JCentralFragment.cpp" />
+    <ClCompile Include="src\JFragment.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\addons\ofx3DModelLoader\src\3DS\model3DS.cpp" />
@@ -174,6 +176,8 @@
     <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ToonPass.h" />
     <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\VerticalTiltShifPass.h" />
     <ClInclude Include="..\..\..\addons\ofxPostProcessing\src\ZoomBlurPass.h" />
+    <ClInclude Include="src\JCentralFragment.h" />
+    <ClInclude Include="src\JFragment.h" />
     <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\model3DS.h" />
     <ClInclude Include="..\..\..\addons\ofx3DModelLoader\src\3DS\texture3DS.h" />

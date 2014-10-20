@@ -2,25 +2,24 @@
 
 #include "ofMain.h"
 #include "ofxPostProcessing.h"
+#include "JCentralFragment.h"
+#include "JFragment.h"
+
 
 class ofApp : public ofBaseApp{
 
 	public:
-		bool fullscreen;
-		ofxPostProcessing post;
-		ofMesh	mesh;
-		ofEasyCam cam;
-		ofVec3f a,b,c,d;
-		ofVec3f* s;
-		ofVec3f* t;
-		ofVec3f* u;
-		ofVec3f* v;
 
-		vector<ofVec3f> allvectors;
-		int nvertices,nadded;
-		long zeit;
-		int smod,tmod,umod,vmod;
-		int suv,stv,tuv;
+		bool fullscreen;
+		// Three times that are used to create the pyramids,fragments and update them
+		long zeit,zeit2,zeit3;
+		ofxPostProcessing post;
+		
+		ofEasyCam cam;
+		JCentralFragment central[6];
+		vector<JFragment> fragments;
+		int nfragments;
+
 		void setup();
 		void update();
 		void draw();
@@ -36,3 +35,6 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 };
+
+
+
