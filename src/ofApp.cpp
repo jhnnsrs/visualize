@@ -1,212 +1,114 @@
 #include "ofApp.h"
-
+#include <ctime>
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetFrameRate(60);
 	ofEnableDepthTest();
+	srand(time(0));
+	fullscreen = false;
+	nfragments = 0;
 
-	smod = 3;
-	tmod = 2;
-	umod = 1;
-	vmod = 0;
+	central[0].init();
+	central[1].init(ofVec3f(34,5,67),ofVec3f(0,5,67),ofVec3f(2,5,67),ofVec3f(34,5,0));
+	central[2].init(ofVec3f(34,0,67),ofVec3f(0,5,35),ofVec3f(2,0,100),ofVec3f(94,5,0));
+	central[3].init(ofVec3f(0,5,35),ofVec3f(2,0,100),ofVec3f(94,5,0),ofVec3f(34,0,67));
+	central[4].init(ofVec3f(34,0,67),ofVec3f(2,0,100),ofVec3f(0,5,35),ofVec3f(94,5,0));
+	central[5].init(ofVec3f(2,0,100),ofVec3f(34,0,67),ofVec3f(0,5,35),ofVec3f(94,5,0));
 
-	nvertices = 0;
-	nadded = 0;
+	cout << "HUHU";
+	post.init(1920, 1080);
+	post.createPass<FxaaPass>();
+	post.createPass<LimbDarkeningPass>();
+
+	
 	zeit = ofGetElapsedTimeMillis();
-	mesh.enableIndices();
+	zeit2 = ofGetElapsedTimeMillis();
+	zeit3 = ofGetElapsedTimeMillis();
 	ofColor color(255,255,0);
 	
-
-	a = ofVec3f(0,0,0);
-	b =	ofVec3f(100,0,0);
-	c = ofVec3f(0,100,0);
-	d = ofVec3f(0,50,100);
-	mesh.addVertex(a);
-	allvectors.push_back(a);
-	mesh.addColor(ofColor(255,0,0));
-
-	mesh.addVertex(b);
-	allvectors.push_back(b);
-	mesh.addColor(ofColor(0,255,0));
-
-	mesh.addVertex(c);
-	allvectors.push_back(c);
-	mesh.addColor(ofColor(0,0,255));
-
-	mesh.addVertex(d);
-	allvectors.push_back(d);
-	mesh.addColor(ofColor(255,0,255));
-
-	nvertices = nvertices+3;
-	cout << mesh.getNumVertices()-1 << endl;
-	cout << nvertices << endl;
-	cout << allvectors.size()-1 << endl;
-	mesh.addIndex(0);
-	mesh.addIndex(1);
-	mesh.addIndex(3);
-
-	mesh.addIndex(0);
-	mesh.addIndex(1);
-	mesh.addIndex(2);
-
-	mesh.addIndex(1);
-	mesh.addIndex(2);
-	mesh.addIndex(3);
-
-	mesh.addIndex(0);
-	mesh.addIndex(3);
-	mesh.addIndex(2);
-
-
+	
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
-
-	if ( ofGetElapsedTimeMillis() > zeit + 1000 && nadded < 4)
-	{
+	
+	// SPAWN NEW TRIANGLE
+	if ( ofGetElapsedTimeMillis() > zeit + 100){
+		for (JCentralFragment &i: central)
+			{
+			i.update();
+			}
 		
-		// Select last pyramid as working pyramid
-		// modifiers specify the chosen vertices
-		ofVec3f s = allvectors[nvertices-smod];
-		ofVec3f t = allvectors[nvertices-tmod];
-		ofVec3f u = allvectors[nvertices-umod];
-		ofVec3f v = allvectors[nvertices-vmod];
-
-		// Rotate pyramide so that the spawn side
-		// can be interpreted as A,B,C (Base) and D
-		// peak. The base is not considered a spawning
-		// side, as this may mess with the 3d structure.
-
-		if (nadded == 0){
-			a = s;
-			b = t;
-			c = u;
-			d = v;
-		}
-		if (nadded == 1){
-			a = t;
-			b = u;
-			c = s;
-			d = v;
-		}
-		if (nadded == 2){
-			a = u;
-			b = s;
-			c = t;
-			d = v;
-		}
-
-		// Calculate barycenter of base (z, with help of m)
-		// normal vector (n) of base and hence the new peak of the
-		// pyramid (newv)
-		ofVec3f n,m,z,newv;
-
-		n = (b-a).crossed(d-a);
-		m = b + (d-b)/2;
-		z = a + 0.666f*(m-a);
-
-		newv = z + n.normalized()*100.0f;
-
-		// Add vector to mesh
-		mesh.addVertex(newv);
-		allvectors.push_back(newv);
-		nvertices++;
-
-
-		// Increment all modifiers
-		umod++;
-		smod++;
-		tmod++;
-		vmod++;
-
-		// Add sides (triangles) to the mesh
-		cout << nvertices-smod << " " << nvertices-tmod << " " << nvertices-vmod << endl;
-
-		if (nadded == 0){
-		mesh.addIndex(nvertices - smod);
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - smod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-		}
-
-		if (nadded == 1){
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-		}
-
-		if (nadded == 2){
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - tmod);
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices);
-
-		mesh.addIndex(nvertices - umod);
-		mesh.addIndex(nvertices - vmod);
-		mesh.addIndex(nvertices);
-		}
-
-		// Decrement Modifiers, depending on spawn side
-		// TODO: Breaks my brain. MACH MA HINNE LUKAS
-		// Hardcoded numbers must dynamically change on count of
-		// oparations from one side
-		if (nadded == 0){
-			umod--;
-			vmod--;
-		}
-
-		if (nadded == 1){
-			smod = smod - 3;
-			vmod--;
-		}
-
-		if (nadded == 2){
-			smod--;
-			vmod--;
-		}
-
 		zeit = ofGetElapsedTimeMillis();
+	}
+
+	// CREATE NEW FRAGMENT
+	if ( ofGetElapsedTimeMillis() > zeit2 + 1000){
+		for (JCentralFragment &i: central)
+			{
+			JFragment* x = new JFragment;
+			x = i.collapse(x,9);
+			/*cout << x->mesh.getNumVertices() << " OUTER VERTEX" <<endl;*/
+			fragments.push_back(*x);
+			nfragments++;
+			
+			/*cout << fragments[nfragments-1].mesh.getVertex(0);*/
+			}		
+		zeit2 = ofGetElapsedTimeMillis();
 		
-		cout << mesh.getNumVertices()-1 << endl;
-		cout << nvertices << endl;
-		cout << allvectors.size()-1 << endl;
+	}
+
+	// UPDATE POSITION OF FRAGMENT
+	if ( ofGetElapsedTimeMillis() > zeit3 + 1){
+		for (JFragment &i: fragments)
+			{
+			i.update();
+			}
 		
-		nadded++;
-		if (nadded ==3){ nadded = 6;}
+		zeit3 = ofGetElapsedTimeMillis();
 	}
 
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	ofBackground(122,122,122);
+	ofColor centerColor = ofColor(85, 78, 68);
+    ofColor edgeColor(0, 0, 0);
+    //ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
+
 	cam.begin();
-	mesh.draw();
+	post.begin(cam);
+	ofBackground(ofColor(0,0,0));
+	ofPushMatrix();
+		ofRotateZ(ofGetElapsedTimef()*10);
+		ofRotateY(ofGetElapsedTimef()*10);
+		ofRotateX(ofGetElapsedTimef()*10);
+		// Draw central figures
+		for(JCentralFragment &z: central)
+		{
+			z.mesh.draw();
+		}
+		// Draw orbiting figures
+		for (JFragment &i: fragments)
+			{
+			ofPushMatrix();
+				ofTranslate(i.getTranslation(ofGetElapsedTimef()));
+				i.mesh.draw();
+			ofPopMatrix();
+			}
+	ofPopMatrix();post.end();
 	cam.end();
+	ofDrawBitmapString("FPS: " + ofToString(ofGetFrameRate()),10,10,0);
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+	
+	if (key == 102) {
+		fullscreen = !fullscreen;
+		ofSetFullscreen(fullscreen);
+	}
 
 }
 
