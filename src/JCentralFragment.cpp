@@ -82,8 +82,8 @@ void JCentralFragment::update(){
 
 	// Add vector to mesh
 	mesh.addVertex(newv);
-	/*mesh.addColor(ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)));*/
-	mesh.addColor(ofColor(255,255,255,35));
+	if (nvertices % 1 == 0 ) {mesh.addColor(ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)));}
+	else {mesh.addColor(ofColor(255,255,255,35));}
 	allvectors.push_back(newv);
 	nvertices++;
 

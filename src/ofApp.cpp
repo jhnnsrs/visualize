@@ -18,7 +18,7 @@ void ofApp::setup(){
 	cout << "HUHU";
 	post.init(1920, 1080);
 	post.createPass<FxaaPass>();
-	post.createPass<GodRaysPass>();
+	post.createPass<LimbDarkeningPass>();
 
 	
 	zeit = ofGetElapsedTimeMillis();
