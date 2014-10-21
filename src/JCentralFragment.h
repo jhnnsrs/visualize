@@ -20,6 +20,8 @@ public:
 	long zeit;
 	void update();
 	void init();
+	void restart();
+	void branch(int there);
 	void init(ofVec3f	a, ofVec3f b, ofVec3f c, ofVec3f d);
 	void setInitialPyramid(ofVec3f	a, ofVec3f b, ofVec3f c, ofVec3f d);
 	

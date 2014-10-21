@@ -16,9 +16,10 @@ class ofApp : public ofBaseApp{
 		ofxPostProcessing post;
 		
 		ofEasyCam cam;
-		JCentralFragment central[6];
+		JCentralFragment central[1];
 		vector<JFragment> fragments;
 		int nfragments;
+		int isrestart,isrestart2;
 
 		void setup();
 		void update();

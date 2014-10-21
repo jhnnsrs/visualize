@@ -30,6 +30,24 @@ void JCentralFragment::init(ofVec3f a, ofVec3f b, ofVec3f c , ofVec3f d ){
 	setInitialPyramid(a,b,c,d);
 }
 
+void JCentralFragment::restart(){
+
+	s = &allvectors[0];
+	t = &allvectors[1];
+	u = &allvectors[2];
+	v = &allvectors[3];
+
+}
+
+void JCentralFragment::branch(int there){
+
+	s = &allvectors[nvertices-3-there];
+	t = &allvectors[nvertices-2-there];
+	u = &allvectors[nvertices-1-there];
+	v = &allvectors[nvertices-0-there];
+
+}
+
 void JCentralFragment::update(){
 	
 	// Select random side

@@ -7,13 +7,15 @@ void ofApp::setup(){
 	srand(time(0));
 	fullscreen = false;
 	nfragments = 0;
+	isrestart = 0;
 
 	central[0].init();
+	/*
 	central[1].init(ofVec3f(34,5,67),ofVec3f(0,5,67),ofVec3f(2,5,67),ofVec3f(34,5,0));
 	central[2].init(ofVec3f(34,0,67),ofVec3f(0,5,35),ofVec3f(2,0,100),ofVec3f(94,5,0));
 	central[3].init(ofVec3f(0,5,35),ofVec3f(2,0,100),ofVec3f(94,5,0),ofVec3f(34,0,67));
 	central[4].init(ofVec3f(34,0,67),ofVec3f(2,0,100),ofVec3f(0,5,35),ofVec3f(94,5,0));
-	central[5].init(ofVec3f(2,0,100),ofVec3f(34,0,67),ofVec3f(0,5,35),ofVec3f(94,5,0));
+	central[5].init(ofVec3f(2,0,100),ofVec3f(34,0,67),ofVec3f(0,5,35),ofVec3f(94,5,0));*/
 
 	cout << "HUHU";
 	post.init(1920, 1080);
@@ -31,6 +33,15 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+
+	/// Do you want to branch?
+	if (isrestart == 1 & isrestart2 != 1) {
+		for (JCentralFragment &i: central)
+			{
+			i.branch(9);
+			}
+		isrestart2 = 1;
+	}
 	
 	// SPAWN NEW TRIANGLE
 	if ( ofGetElapsedTimeMillis() > zeit + 100){
@@ -109,11 +120,19 @@ void ofApp::keyPressed(int key){
 		fullscreen = !fullscreen;
 		ofSetFullscreen(fullscreen);
 	}
+	if (key == 103) {
+		isrestart = 1;
+	}
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
+	
+	if (key == 103) {
+		isrestart = 0;
+		isrestart2 = 0;
+	}
 
 }
 
