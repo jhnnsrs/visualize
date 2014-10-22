@@ -12,7 +12,6 @@ void JCentralFragment::init(){
 	
 	// Set Inital Size of Vertices
 	nvertices = 0;
-
 	mesh.enableIndices();
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
 
@@ -45,6 +44,8 @@ void JCentralFragment::branch(int there){
 	t = &allvectors[nvertices-2-there];
 	u = &allvectors[nvertices-1-there];
 	v = &allvectors[nvertices-0-there];
+
+	
 
 }
 
@@ -100,7 +101,7 @@ void JCentralFragment::update(){
 
 	// Add vector to mesh
 	mesh.addVertex(newv);
-	if (nvertices % 1 == 0 ) {mesh.addColor(ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)));}
+	if (nvertices % 10 == 0 ) {mesh.addColor(ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)));}
 	else {mesh.addColor(ofColor(255,255,255,35));}
 	allvectors.push_back(newv);
 	nvertices++;

@@ -8,19 +8,25 @@ void ofApp::setup(){
 	fullscreen = false;
 	nfragments = 0;
 	isrestart = 0;
+	spotlight.setSpotlight();
+	spotlight.lookAt(ofVec3f(0,0,0));
+	ambientlight.setAmbientColor(ofColor(255,255,255));
+
+	// START OSC
+	oscthread.startThread();
 
 	central[0].init();
-	/*
 	central[1].init(ofVec3f(34,5,67),ofVec3f(0,5,67),ofVec3f(2,5,67),ofVec3f(34,5,0));
 	central[2].init(ofVec3f(34,0,67),ofVec3f(0,5,35),ofVec3f(2,0,100),ofVec3f(94,5,0));
 	central[3].init(ofVec3f(0,5,35),ofVec3f(2,0,100),ofVec3f(94,5,0),ofVec3f(34,0,67));
 	central[4].init(ofVec3f(34,0,67),ofVec3f(2,0,100),ofVec3f(0,5,35),ofVec3f(94,5,0));
-	central[5].init(ofVec3f(2,0,100),ofVec3f(34,0,67),ofVec3f(0,5,35),ofVec3f(94,5,0));*/
+	central[5].init(ofVec3f(2,0,100),ofVec3f(34,0,67),ofVec3f(0,5,35),ofVec3f(94,5,0));
 
 	cout << "HUHU";
 	post.init(1920, 1080);
 	post.createPass<FxaaPass>();
 	post.createPass<LimbDarkeningPass>();
+	post.createPass<GodRaysPass>();
 
 	
 	zeit = ofGetElapsedTimeMillis();
@@ -34,6 +40,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
+
 	/// Do you want to branch?
 	if (isrestart == 1 & isrestart2 != 1) {
 		for (JCentralFragment &i: central)
@@ -42,19 +49,23 @@ void ofApp::update(){
 			}
 		isrestart2 = 1;
 	}
-	
+
+	oscthread.lock();	//Lock should be tighter set
 	// SPAWN NEW TRIANGLE
-	if ( ofGetElapsedTimeMillis() > zeit + 100){
+	if ( oscthread.sh_beat == 1){
 		for (JCentralFragment &i: central)
 			{
 			i.update();
 			}
-		
+		oscthread.sh_beat = 0;
 		zeit = ofGetElapsedTimeMillis();
 	}
+	
+	oscthread.unlock();
 
+	oscthread.lock();
 	// CREATE NEW FRAGMENT
-	if ( ofGetElapsedTimeMillis() > zeit2 + 1000){
+	if ( oscthread.sh_beat == 1){
 		for (JCentralFragment &i: central)
 			{
 			JFragment* x = new JFragment;
@@ -66,16 +77,37 @@ void ofApp::update(){
 			/*cout << fragments[nfragments-1].mesh.getVertex(0);*/
 			}		
 		zeit2 = ofGetElapsedTimeMillis();
+		cout << "HAHA";
+		oscthread.sh_beat = 0;
 		
 	}
+	oscthread.unlock();
 
-	// UPDATE POSITION OF FRAGMENT
+	// UPDATE POSITION OF FRAGMENT AND CAMERA
 	if ( ofGetElapsedTimeMillis() > zeit3 + 1){
 		for (JFragment &i: fragments)
 			{
 			i.update();
 			}
-		
+		// CAMERA ???
+
+
+		//if (central[0].nvertices >= 9) {
+		//ofVec3f a,b,c,d,camp,n,campold,campo;
+		//d = central[0].allvectors[central[0].nvertices-9];
+		//c = central[0].allvectors[central[0].nvertices-9];
+		//b = central[0].allvectors[central[0].nvertices-9];
+		//a = central[0].allvectors[central[0].nvertices-9];
+
+		//n = (b-a).crossed(c-a);
+
+		//camp = d + ofVec3f(-40,,40);
+		//campold = cam.getPosition();/*
+		//campo = cam.getLookAtDir();
+		//n = campo + n;
+		//camp = campold + 0.01*(campold-camp);*/
+		//cam.setPosition(camp);
+		//}
 		zeit3 = ofGetElapsedTimeMillis();
 	}
 
@@ -86,7 +118,8 @@ void ofApp::draw(){
 	ofColor centerColor = ofColor(85, 78, 68);
     ofColor edgeColor(0, 0, 0);
     //ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
-
+	spotlight.enable();
+	ambientlight.enable();
 	cam.begin();
 	post.begin(cam);
 	ofBackground(ofColor(0,0,0));
@@ -109,6 +142,8 @@ void ofApp::draw(){
 			}
 	ofPopMatrix();post.end();
 	cam.end();
+	spotlight.disable();
+	ambientlight.disable();
 	ofDrawBitmapString("FPS: " + ofToString(ofGetFrameRate()),10,10,0);
 
 }
@@ -169,4 +204,10 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+void ofApp::exit() {
+ 
+    // stop the thread
+    oscthread.stopThread();
 }

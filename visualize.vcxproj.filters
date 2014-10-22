@@ -176,6 +176,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\JFragment.cpp" />
+    <ClCompile Include="src\JOSCThread.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -457,6 +460,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\JFragment.h" />
+    <ClInclude Include="src\JOSCThread.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

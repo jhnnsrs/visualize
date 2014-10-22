@@ -4,6 +4,7 @@
 #include "ofxPostProcessing.h"
 #include "JCentralFragment.h"
 #include "JFragment.h"
+#include "JOSCThread.h"
 
 
 class ofApp : public ofBaseApp{
@@ -14,9 +15,12 @@ class ofApp : public ofBaseApp{
 		// Three times that are used to create the pyramids,fragments and update them
 		long zeit,zeit2,zeit3;
 		ofxPostProcessing post;
+		ofLight spotlight;
+		ofLight ambientlight;
+		JOSCThread oscthread;
 		
 		ofEasyCam cam;
-		JCentralFragment central[1];
+		JCentralFragment central[6];
 		vector<JFragment> fragments;
 		int nfragments;
 		int isrestart,isrestart2;
@@ -24,6 +28,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+		void exit();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
