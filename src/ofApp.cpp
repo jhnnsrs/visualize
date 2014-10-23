@@ -64,12 +64,12 @@ void ofApp::update(){
 
 	oscthread.lock();
 	// CREATE NEW FRAGMENT
-	if ( oscthread.sh_beat % 8 == 0 && oscthread.sh_beat != 0){
+	if ( oscthread.sh_beat % 16 == 0 && oscthread.sh_beat != 0){
 		ofColor fragcolor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255),255);
 		for (JCentralFragment &i: central)
 			{
 			JFragment* x = new JFragment;
-			x = i.collapse(x,(int)ofRandom(3,6),fragcolor);
+			x = i.collapse(x,9,fragcolor);
 			/*cout << x->mesh.getNumVertices() << " OUTER VERTEX" <<endl;*/
 			fragments.push_back(*x);
 			nfragments++;

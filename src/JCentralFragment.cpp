@@ -208,6 +208,7 @@ JFragment* JCentralFragment::collapse(JFragment* frag,int size,ofColor color,flo
 	
 	// TODO:  FRAGMENT SHOULD NOT BE ADDED TO vector of FRAGMENTS
 	// Only collapse if JCentralFragment is large enough
+	size -= 1;
 	if ( size >= nvertices-size) { return frag; }
 
 	// SEND TO FRAGMENT
@@ -259,6 +260,7 @@ JFragment* JCentralFragment::collapse(JFragment* frag,int size,ofColor color,flo
 	s = &allvectors[nvertices-3];
 
 	ofVec3f n = (*t-*s).crossed(*u-*s);
+	n = *v;
 
 	frag->direction = n.normalized();
 	/*
