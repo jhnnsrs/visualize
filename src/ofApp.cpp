@@ -52,12 +52,12 @@ void ofApp::update(){
 
 	oscthread.lock();	//Lock should be tighter set
 	// SPAWN NEW TRIANGLE
-	if ( oscthread.sh_beat == 1){
+	if ( oscthread.sh_beat != 0){
 		for (JCentralFragment &i: central)
 			{
 			i.update();
+			i.update();
 			}
-		oscthread.sh_beat = 0;
 		zeit = ofGetElapsedTimeMillis();
 	}
 	
@@ -65,11 +65,12 @@ void ofApp::update(){
 
 	oscthread.lock();
 	// CREATE NEW FRAGMENT
-	if ( oscthread.sh_beat == 1){
+	if ( oscthread.sh_beat % 4 == 0 && oscthread.sh_beat != 0){
+		ofColor fragcolor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255),255);
 		for (JCentralFragment &i: central)
 			{
 			JFragment* x = new JFragment;
-			x = i.collapse(x,9);
+			x = i.collapse(x,(int)ofRandom(3,9),fragcolor);
 			/*cout << x->mesh.getNumVertices() << " OUTER VERTEX" <<endl;*/
 			fragments.push_back(*x);
 			nfragments++;
@@ -77,12 +78,13 @@ void ofApp::update(){
 			/*cout << fragments[nfragments-1].mesh.getVertex(0);*/
 			}		
 		zeit2 = ofGetElapsedTimeMillis();
-		cout << "HAHA";
-		oscthread.sh_beat = 0;
 		
 	}
+	
+	oscthread.sh_beat = 0;
 	oscthread.unlock();
 
+	
 	// UPDATE POSITION OF FRAGMENT AND CAMERA
 	if ( ofGetElapsedTimeMillis() > zeit3 + 1){
 		for (JFragment &i: fragments)
@@ -115,9 +117,6 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	ofColor centerColor = ofColor(85, 78, 68);
-    ofColor edgeColor(0, 0, 0);
-    //ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
 	spotlight.enable();
 	ambientlight.enable();
 	cam.begin();
@@ -144,6 +143,10 @@ void ofApp::draw(){
 	cam.end();
 	spotlight.disable();
 	ambientlight.disable();
+	
+	ofColor centerColor = ofColor(85, 78, 68);
+    ofColor edgeColor(0, 0, 0);
+    ofBackgroundGradient(centerColor, edgeColor, OF_GRADIENT_CIRCULAR);
 	ofDrawBitmapString("FPS: " + ofToString(ofGetFrameRate()),10,10,0);
 
 }

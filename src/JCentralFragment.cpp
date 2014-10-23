@@ -101,8 +101,8 @@ void JCentralFragment::update(){
 
 	// Add vector to mesh
 	mesh.addVertex(newv);
-	if (nvertices % 10 == 0 ) {mesh.addColor(ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)));}
-	else {mesh.addColor(ofColor(255,255,255,35));}
+	if (nvertices % 1000 == 0 ) {mesh.addColor(ofColor(ofRandom(0,255),ofRandom(0,255),ofRandom(0,255)));}
+	else {mesh.addColor(ofColor(255,255,255,ofRandom(22,120)));}
 	allvectors.push_back(newv);
 	nvertices++;
 
@@ -156,6 +156,7 @@ void JCentralFragment::update(){
 	mesh.addIndex(u - np);
 
 
+
 	zeit = ofGetElapsedTimeMillis();
 		
 }
@@ -194,27 +195,57 @@ void JCentralFragment::setInitialPyramid(ofVec3f a, ofVec3f b , ofVec3f c  , ofV
 
 }
 
-JFragment* JCentralFragment::collapse(JFragment* frag,int size) {
+JFragment* JCentralFragment::collapse(JFragment* frag,int size,ofColor color) {
+	
+	// TODO:  FRAGMENT SHOULD NOT BE ADDED TO vector of FRAGMENTS
+	// Only collapse if JCentralFragment is large enough
+	if ( size >= nvertices-size) { return frag; }
 
-	vector<ofVec3f> vectors;
-	vectors = mesh.getVertices();
-
-	int s = vectors.end() - vectors.begin();
-	if ( size > s) { size = 3; }
+	// SEND TO FRAGMENT
+	vector<ofVec3f> fragvectors;
+	vector<ofColor> fragcolors;
+	vector<int> fragindices;
 
 	for (int i = 0; i < size; i++)
 	{
-		frag->mesh.addVertex(vectors.at(nvertices-i));
-		frag->mesh.addColor(ofColor(255,255,255,24));
+		fragvectors.push_back(allvectors.at(nvertices));
+		fragcolors.push_back(mesh.getColor(nvertices));
+		int ups = mesh.getNumIndices();
+		// BECAUSE EVERY VERTEX HAS TWELVE SIDES
+		for (int x = 0; x < 12; x++)
+		{
+			// MAYBE TO SAVE LAST TRIANGLE
+			fragindices.push_back(mesh.getIndex(ups-1-x));
+			// MAYBE TO SAVE LAST TRIANGLE
+			//if ( i != size-1 | x<9) mesh.removeIndex(ups-1-x);
+			mesh.removeIndex(ups-1-x);	
+		}
+		allvectors.pop_back();
+		mesh.removeVertex(nvertices);
+		nvertices--;
+	}
+
+	for (int i = 0; i < fragvectors.end() - fragvectors.begin(); i++)
+	{
+		frag->mesh.addVertex(fragvectors[i]);
+		//frag->mesh.addColor(fragcolors[i]);
+		frag->mesh.addColor(color);
+	}
+
+	for (int i = 0; i < fragindices.end() - fragindices.begin(); i++)
+	{	
+		cout << -1*(fragindices[i]-nvertices);
+		//frag->mesh.addIndex(-1*(fragindices[i]-nvertices));
 	}
 
 	// MAKE DIRECTION
 
-	ofVec3f a = vectors.at(nvertices);
-	ofVec3f b = vectors.at(nvertices-1);
-	ofVec3f c = vectors.at(nvertices-2);
+	v = &allvectors[nvertices];
+	u = &allvectors[nvertices-1];
+	t = &allvectors[nvertices-2];
+	s = &allvectors[nvertices-3];
 
-	ofVec3f n = (b-a).crossed(c-a);
+	ofVec3f n = (*t-*s).crossed(*u-*s);
 
 	frag->direction = n.normalized();
 	/*

@@ -6,25 +6,39 @@
 #include "JFragment.h"
 #include "JOSCThread.h"
 
+// Visualize Software
+// Features:
+//		- Central Fragment Spawing Triangles
+//		- LiveOSC integration via JOSCThread
 
 class ofApp : public ofBaseApp{
 
 	public:
-
+		// Global Variables
 		bool fullscreen;
-		// Three times that are used to create the pyramids,fragments and update them
+
+		// Time variables
 		long zeit,zeit2,zeit3;
+
+		// OSC Control Interface
+		JOSCThread oscthread;
+
+		// Processing, Matrixes and Light
 		ofxPostProcessing post;
 		ofLight spotlight;
 		ofLight ambientlight;
-		JOSCThread oscthread;
-		
 		ofEasyCam cam;
+		
+		// Figures
 		JCentralFragment central[6];
 		vector<JFragment> fragments;
+
+		// Indexes of Figures
+		int ncentral;
 		int nfragments;
 		int isrestart,isrestart2;
 
+		// Functions of Openframework
 		void setup();
 		void update();
 		void draw();

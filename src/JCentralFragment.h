@@ -28,7 +28,7 @@ public:
 	JCentralFragment();
 	~JCentralFragment();
 	
-	JFragment* collapse(JFragment* frag,int size);
+	JFragment* collapse(JFragment* frag,int size,ofColor color);
 private:
 
 

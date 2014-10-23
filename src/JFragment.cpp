@@ -7,7 +7,7 @@ JFragment::JFragment(void)
 	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 	starttime = ofGetElapsedTimef();
 	direction = ofVec3f(1,0,0);
-	velocity = 200;
+	velocity = 1000;
 }
 
 
@@ -17,7 +17,7 @@ JFragment::~JFragment(void)
 
 void JFragment::update() {
 	float t = ofGetElapsedTimef() - starttime;
-	velocity -= t*0.0001;
+	velocity -= t*0.0002;
 	if (velocity <= 10) velocity = 10;
 
 

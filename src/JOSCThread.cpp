@@ -25,9 +25,10 @@ void JOSCThread::threadedFunction() {
 				if(m.getAddress() == "/live/beat"){
 					lock();
 					// Set Arrived Message
-					sh_beat = 1; 
+					sh_beat = m.getArgAsInt32(0);
 					// 
 					unlock();
+					m_nbeatcount += 1;
 				}
 				
             }   
