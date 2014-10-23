@@ -7,7 +7,7 @@ JFragment::JFragment(void)
 	mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
 	starttime = ofGetElapsedTimef();
 	direction = ofVec3f(1,0,0);
-	velocity = 1000;
+	velocity = 2000;
 }
 
 
@@ -17,7 +17,7 @@ JFragment::~JFragment(void)
 
 void JFragment::update() {
 	float t = ofGetElapsedTimef() - starttime;
-	velocity -= t*0.0002;
+	velocity = exp(t*0.0002)*velocity;
 	if (velocity <= 10) velocity = 10;
 
 
@@ -30,4 +30,14 @@ ofVec3f JFragment::getTranslation(float time){
 	ofVec3f position = direction*velocity*dtime;
 
 	return position;
+}
+
+void JFragment::draw(){
+
+	ofPushMatrix();
+		//Translation will be
+		ofTranslate(getTranslation(ofGetElapsedTimef()));
+		mesh.draw();
+	ofPopMatrix();
+
 }

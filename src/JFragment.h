@@ -14,6 +14,7 @@ public:
 	float starttime;
 
 	void init();
+	void draw();
 	void update();
 	ofVec3f getTranslation(float time);
 };

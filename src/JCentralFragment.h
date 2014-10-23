@@ -28,7 +28,7 @@ public:
 	JCentralFragment();
 	~JCentralFragment();
 	
-	JFragment* collapse(JFragment* frag,int size,ofColor color);
+	JFragment* collapse(JFragment* frag,int size,ofColor color,float alpha = ofRandom(23,70));
 private:
 
 

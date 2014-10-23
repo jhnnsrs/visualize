@@ -40,6 +40,8 @@ void JCentralFragment::restart(){
 
 void JCentralFragment::branch(int there){
 
+	if (nvertices-3-there < 0 ) return;
+
 	s = &allvectors[nvertices-3-there];
 	t = &allvectors[nvertices-2-there];
 	u = &allvectors[nvertices-1-there];
@@ -139,6 +141,11 @@ void JCentralFragment::update(){
 	// Add sides (triangles) to the mesh
 
 	ofVec3f *np = &allvectors[0];
+	
+	mesh.addIndex(s - np);
+	mesh.addIndex(t - np);
+	mesh.addIndex(u - np);
+
 	mesh.addIndex(s - np);
 	mesh.addIndex(t - np);
 	mesh.addIndex(v - np);
@@ -151,9 +158,6 @@ void JCentralFragment::update(){
 	mesh.addIndex(t - np);
 	mesh.addIndex(v - np);
 
-	mesh.addIndex(s - np);
-	mesh.addIndex(t - np);
-	mesh.addIndex(u - np);
 
 
 
@@ -166,19 +170,24 @@ void JCentralFragment::setInitialPyramid(ofVec3f a, ofVec3f b , ofVec3f c  , ofV
 	// Add verteces
 	mesh.addVertex(a);
 	allvectors.push_back(a);
-	mesh.addColor(ofColor(255,0,0));
+	//mesh.addColor(ofColor(255,0,0));
 
 	mesh.addVertex(b);
 	allvectors.push_back(b);
-	mesh.addColor(ofColor(0,255,0));
+	//mesh.addColor(ofColor(0,255,0));
 
 	mesh.addVertex(c);
 	allvectors.push_back(c);
-	mesh.addColor(ofColor(0,0,255));
+	//mesh.addColor(ofColor(0,0,255));
 
 	mesh.addVertex(d);
 	allvectors.push_back(d);
-	mesh.addColor(ofColor(255,0,255));
+	//mesh.addColor(ofColor(255,0,255));
+
+	mesh.addColor(ofColor(0,0,0,ofRandom(23,144)));
+	mesh.addColor(ofColor(0,0,0,ofRandom(23,144)));
+	mesh.addColor(ofColor(0,0,0,ofRandom(23,144)));
+	mesh.addColor(ofColor(0,0,0,ofRandom(23,144)));
 
 	nvertices = nvertices + 3;
 
@@ -195,7 +204,7 @@ void JCentralFragment::setInitialPyramid(ofVec3f a, ofVec3f b , ofVec3f c  , ofV
 
 }
 
-JFragment* JCentralFragment::collapse(JFragment* frag,int size,ofColor color) {
+JFragment* JCentralFragment::collapse(JFragment* frag,int size,ofColor color,float alpha) {
 	
 	// TODO:  FRAGMENT SHOULD NOT BE ADDED TO vector of FRAGMENTS
 	// Only collapse if JCentralFragment is large enough
@@ -205,40 +214,44 @@ JFragment* JCentralFragment::collapse(JFragment* frag,int size,ofColor color) {
 	vector<ofVec3f> fragvectors;
 	vector<ofColor> fragcolors;
 	vector<int> fragindices;
+	map<int,int> vectorreference;
 
-	for (int i = 0; i < size; i++)
+	//
+	int nindicesmesh = mesh.getNumIndices()-1;
+
+
+	// Will look for all connected vertices to the four faces of each pyramid on the new fragment
+	// while scanning the faces as triplets of indices. If new vertex is found it is added to fragvectors
+	// and a new key (index of vertex in centralfigure) and value ( new index of vertex in fragment/fragvectors) is 
+	// appended to the vectorreferencemap
+	for (int i = (nindicesmesh - 12*size); i <= nindicesmesh; i++)
 	{
-		fragvectors.push_back(allvectors.at(nvertices));
-		fragcolors.push_back(mesh.getColor(nvertices));
-		int ups = mesh.getNumIndices();
-		// BECAUSE EVERY VERTEX HAS TWELVE SIDES
-		for (int x = 0; x < 12; x++)
-		{
-			// MAYBE TO SAVE LAST TRIANGLE
-			fragindices.push_back(mesh.getIndex(ups-1-x));
-			// MAYBE TO SAVE LAST TRIANGLE
-			//if ( i != size-1 | x<9) mesh.removeIndex(ups-1-x);
-			mesh.removeIndex(ups-1-x);	
+		fragindices.push_back(mesh.getIndex(i));
+		if (vectorreference.count(mesh.getIndex(i)) == 0){
+			fragvectors.push_back(allvectors[mesh.getIndex(i)]);
+			frag->mesh.addVertex(allvectors[mesh.getIndex(i)]);
+			frag->mesh.addColor(ofColor(color.r,color.g,color.b,alpha));
+			vectorreference[mesh.getIndex(i)] = fragvectors.end() - fragvectors.begin()-1;
 		}
-		allvectors.pop_back();
-		mesh.removeVertex(nvertices);
-		nvertices--;
 	}
 
-	for (int i = 0; i < fragvectors.end() - fragvectors.begin(); i++)
-	{
-		frag->mesh.addVertex(fragvectors[i]);
-		//frag->mesh.addColor(fragcolors[i]);
-		frag->mesh.addColor(color);
-	}
-
+	// Adding Indixes according to vectorreferencemap and deleting faces from old
 	for (int i = 0; i < fragindices.end() - fragindices.begin(); i++)
 	{	
-		cout << -1*(fragindices[i]-nvertices);
-		//frag->mesh.addIndex(-1*(fragindices[i]-nvertices));
+		cout << vectorreference[fragindices[i]] <<endl;
+		frag->mesh.addIndex(vectorreference[fragindices[i]]);
+		// SAVE LAST FACE
+		if (i < fragindices.end() - fragindices.begin()-3) mesh.removeIndex(nindicesmesh-i);
 	}
-
-	// MAKE DIRECTION
+	for (int i = 0; i <= size; i++)
+	{
+		mesh.removeVertex(nvertices);		
+		mesh.removeColor(nvertices);
+		allvectors.pop_back();
+		nvertices--;
+	}
+	
+	// SET DIRECTION
 
 	v = &allvectors[nvertices];
 	u = &allvectors[nvertices-1];
