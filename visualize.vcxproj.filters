@@ -175,8 +175,10 @@
     <ClCompile Include="src\JCentralFragment.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\JFragment.cpp" />
     <ClCompile Include="src\JOSCThread.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\JFragment.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -459,8 +461,10 @@
     <ClInclude Include="src\JCentralFragment.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\JFragment.h" />
     <ClInclude Include="src\JOSCThread.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JFragment.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

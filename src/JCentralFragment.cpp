@@ -241,8 +241,7 @@ JFragment* JCentralFragment::collapse(JFragment* frag,int size,ofColor color,flo
 	{	
 		cout << vectorreference[fragindices[i]] <<endl;
 		frag->mesh.addIndex(vectorreference[fragindices[i]]);
-		// SAVE LAST FACE
-		if (i < fragindices.end() - fragindices.begin()-3) mesh.removeIndex(nindicesmesh-i);
+		mesh.removeIndex(nindicesmesh-i);
 	}
 	for (int i = 0; i <= size; i++)
 	{
